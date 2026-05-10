@@ -1,4 +1,4 @@
-# FindMe
+# FindMe Again
 
 [English](#english) | [中文](#中文)
 
@@ -6,7 +6,7 @@
 
 ## 中文
 
-FindMe 是一个 Minecraft Fabric 模组，悬停物品后按搜索键（默认 `Y`）即可高亮附近存放该物品的容器。
+FindMe Again 是一个 Minecraft Fabric 模组，悬停物品后按搜索键（默认 `Y`）即可高亮附近存放该物品的容器。
 
 本版本是对原 [FindMe](https://www.curseforge.com/minecraft/mc-mods/findme) 模组的迁移，面向 Minecraft 26.1 Fabric。
 
@@ -28,6 +28,10 @@ FindMe 是一个 Minecraft Fabric 模组，悬停物品后按搜索键（默认 
 ./gradlew build
 ```
 
+### 已知不兼容
+
+- 与 MiniHUD 的 `FIX_VANILLA_DEBUG_RENDERER_THROUGH` 功能不兼容，启用该功能会导致线框无法穿墙渲染。
+
 ### 致谢
 
 - 原作者：Buuz135
@@ -37,7 +41,7 @@ FindMe 是一个 Minecraft Fabric 模组，悬停物品后按搜索键（默认 
 
 ## English
 
-FindMe is a Minecraft Fabric mod that highlights nearby containers storing the item you hover over. Press the search key (default `Y`) to search.
+FindMe Again is a Minecraft Fabric mod that highlights nearby containers storing the item you hover over. Press the search key (default `Y`) to search.
 
 This version is a migration of the original [FindMe](https://www.curseforge.com/minecraft/mc-mods/findme) mod, targeting Minecraft 26.1 Fabric.
 
@@ -57,6 +61,10 @@ This version is a migration of the original [FindMe](https://www.curseforge.com/
 ```bash
 ./gradlew build
 ```
+
+### Known Issues
+
+- Incompatible with MiniHUD when `FIX_VANILLA_DEBUG_RENDERER_THROUGH` enabled in MiniHUD, which will cause the wireframe cannot render through walls.
 
 ### Credits
 

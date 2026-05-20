@@ -2,6 +2,7 @@ package com.buuz135.findme.network;
 
 import com.buuz135.findme.FindMeMod;
 import com.buuz135.findme.tracking.HighlightCache;
+import com.buuz135.findme.tracking.TrackingList;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -84,6 +85,9 @@ public class PositionResponseMessage implements CustomPacketPayload {
 
             int total = blockPositions.size() + itemEntityIds.size() + entityIds.size();
             if (total > 0) {
+                // 激活容器槽位高亮追踪
+                TrackingList.beginTracking();
+
                 player.closeContainer();
                 player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);
 

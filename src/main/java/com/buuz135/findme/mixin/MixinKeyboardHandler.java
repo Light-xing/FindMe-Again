@@ -33,8 +33,8 @@ public class MixinKeyboardHandler {
 
         // 仅处理 Minecraft 主窗口的按键，避免在其他弹出窗口中误触发
         if (windowPointer != Minecraft.getInstance().getWindow().handle()) return;
-        if (Minecraft.getInstance().screen != null) {
-            if (Minecraft.getInstance().screen.getFocused() instanceof EditBox) {
+        if (Minecraft.getInstance().gui.screen() != null) {
+            if (Minecraft.getInstance().gui.screen().getFocused() instanceof EditBox) {
                 return;
             }
         }

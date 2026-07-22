@@ -1,5 +1,6 @@
 package com.buuz135.findme.tracking;
 
+import com.buuz135.findme.FindMeMod;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -45,14 +46,20 @@ public class HighlightCache {
     private static final List<Entry> entries = new ArrayList<>();
 
     public static void addBlockHighlight(BlockPos pos, int durationTicks) {
+        FindMeMod.LOGGER.debug("[HighlightCache] addBlockHighlight | pos=({}, {}, {}) | durationTicks={} | totalEntries={}",
+                pos.getX(), pos.getY(), pos.getZ(), durationTicks, entries.size() + 1);
         entries.add(new Entry(HighlightType.BLOCK, pos, -1, durationTicks));
     }
 
     public static void addItemEntityHighlight(int entityId, int durationTicks) {
+        FindMeMod.LOGGER.debug("[HighlightCache] addItemEntityHighlight | entityId={} | durationTicks={} | totalEntries={}",
+                entityId, durationTicks, entries.size() + 1);
         entries.add(new Entry(HighlightType.ITEM_ENTITY, null, entityId, durationTicks));
     }
 
     public static void addEntityHighlight(int entityId, int durationTicks) {
+        FindMeMod.LOGGER.debug("[HighlightCache] addEntityHighlight | entityId={} | durationTicks={} | totalEntries={}",
+                entityId, durationTicks, entries.size() + 1);
         entries.add(new Entry(HighlightType.ENTITY, null, entityId, durationTicks));
     }
 
@@ -64,6 +71,8 @@ public class HighlightCache {
             Entry entry = iterator.next();
             entry.remainingTicks--;
             if (entry.remainingTicks <= 0) {
+                FindMeMod.LOGGER.debug("[HighlightCache] tick | EXPIRED entry type={} | entityId={} | blockPos={} | remainingTicks reached 0",
+                        entry.getType(), entry.getEntityId(), entry.getBlockPos());
                 iterator.remove();
                 continue;
             }
@@ -74,11 +83,15 @@ public class HighlightCache {
                     case BLOCK -> {
                         BlockPos pos = entry.getBlockPos();
                         if (pos != null && level.getBlockState(pos).isAir()) {
+                            FindMeMod.LOGGER.debug("[HighlightCache] tick | CANCELLED block highlight | pos=({}, {}, {}) | block became air",
+                                    pos.getX(), pos.getY(), pos.getZ());
                             iterator.remove();
                         }
                     }
                     case ITEM_ENTITY, ENTITY -> {
                         if (level.getEntity(entry.getEntityId()) == null) {
+                            FindMeMod.LOGGER.debug("[HighlightCache] tick | CANCELLED {} highlight | entityId={} | entity no longer exists",
+                                    entry.getType(), entry.getEntityId());
                             iterator.remove();
                         }
                     }
@@ -88,6 +101,7 @@ public class HighlightCache {
     }
 
     public static void clear() {
+        FindMeMod.LOGGER.debug("[HighlightCache] clear | removing {} entries", entries.size());
         entries.clear();
     }
 

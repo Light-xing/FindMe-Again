@@ -32,6 +32,9 @@ public class HighlightRenderer {
 
         boolean alwaysOnTop = config.LASER_THROUGH_WALLS;
 
+        FindMeMod.LOGGER.debug("[HighlightRenderer] render() called | partialTick={} | entries={} | alwaysOnTop={}",
+                String.format("%.3f", partialTick), HighlightCache.getEntries().size(), alwaysOnTop);
+
         for (HighlightCache.Entry entry : HighlightCache.getEntries()) {
             if (entry.getRemainingTicks() <= 0) continue;
 
@@ -45,6 +48,10 @@ public class HighlightRenderer {
                 fade = entry.getRemainingTicks() / 10.0f;
             }
             int alpha = Math.min(255, Math.max(4, (int) (pulse * fade * 255)));
+
+            FindMeMod.LOGGER.debug("[HighlightRenderer]   entry type={} | remainingTicks={}/{} | elapsed={} | pulse={} | fade={} | alpha={}",
+                    entry.getType(), entry.getRemainingTicks(), entry.getInitialTicks(),
+                    String.format("%.0f", elapsed), String.format("%.3f", pulse), String.format("%.3f", fade), alpha);
 
             switch (entry.getType()) {
                 case BLOCK -> renderBlockHighlight(entry, alpha, alwaysOnTop);
@@ -60,6 +67,12 @@ public class HighlightRenderer {
         Color c = FindMeMod.CONFIG.CLIENT.getBlockLaserColor();
         int color = (alpha << 24) | (c.getRed() << 16) | (c.getGreen() << 8) | c.getBlue();
         float width = LINE_WIDTH * FindMeMod.CONFIG.CLIENT.LASER_WIDTH;
+
+        FindMeMod.LOGGER.debug("[HighlightRenderer] renderBlockHighlight | pos=({}, {}, {}) | color={} (a={}, r={}, g={}, b={}) | lineWidth={} | alwaysOnTop={}",
+                pos.getX(), pos.getY(), pos.getZ(),
+                String.format("0x%08X", color), alpha, c.getRed(), c.getGreen(), c.getBlue(),
+                String.format("%.2f", width), alwaysOnTop);
+
         var gizmo = cuboid(pos, stroke(color, width));
         if (alwaysOnTop) gizmo.setAlwaysOnTop();
     }
@@ -91,6 +104,14 @@ public class HighlightRenderer {
         double cz = pos.z;
         double h = half;
 
+        float lineWidth = LINE_WIDTH * FindMeMod.CONFIG.CLIENT.LASER_WIDTH;
+        FindMeMod.LOGGER.debug("[HighlightRenderer] renderItemEntityHighlight | entityId={} | age={} | pos=({}, {}, {}) | yOffset={} | angle={}rad({}°) | boxHalf={} | color={} | lineWidth={} | alwaysOnTop={}",
+                entry.getEntityId(), String.format("%.0f", age),
+                String.format("%.2f", pos.x), String.format("%.2f", pos.y), String.format("%.2f", pos.z),
+                String.format("%.2f", yOffset), String.format("%.3f", angle), String.format("%.1f", Math.toDegrees(angle)),
+                String.format("%.3f", half),
+                String.format("0x%08X", color), String.format("%.2f", lineWidth), alwaysOnTop);
+
         // 8 vertices of a cube centered at origin (before rotation)
         double[][] verts = {
             {-h, -h, -h}, { h, -h, -h}, {-h, -h,  h}, { h, -h,  h},
@@ -112,7 +133,8 @@ public class HighlightRenderer {
             {0, 4}, {1, 5}, {2, 6}, {3, 7}   // vertical edges
         };
 
-        float lineWidth = LINE_WIDTH * FindMeMod.CONFIG.CLIENT.LASER_WIDTH;
+        FindMeMod.LOGGER.debug("[HighlightRenderer] renderItemEntityHighlight | drawing {} edges for cube wireframe", edges.length);
+
         for (int[] edge : edges) {
             var gizmo = line(v[edge[0]], v[edge[1]], color, lineWidth);
             if (alwaysOnTop) gizmo.setAlwaysOnTop();
@@ -133,6 +155,15 @@ public class HighlightRenderer {
         bb = bb.inflate(0.05);
 
         float width = LINE_WIDTH * FindMeMod.CONFIG.CLIENT.LASER_WIDTH;
+
+        FindMeMod.LOGGER.debug("[HighlightRenderer] renderEntityHighlight | entityId={} | entityType={} | bb=({}, {}, {})->({}, {}, {}) | color={} (a={}, r={}, g={}, b={}) | lineWidth={} | alwaysOnTop={}",
+                entry.getEntityId(),
+                entity.getType().getDescriptionId(),
+                String.format("%.2f", bb.minX), String.format("%.2f", bb.minY), String.format("%.2f", bb.minZ),
+                String.format("%.2f", bb.maxX), String.format("%.2f", bb.maxY), String.format("%.2f", bb.maxZ),
+                String.format("0x%08X", color), alpha, c.getRed(), c.getGreen(), c.getBlue(),
+                String.format("%.2f", width), alwaysOnTop);
+
         var gizmo = cuboid(bb, stroke(color, width));
         if (alwaysOnTop) gizmo.setAlwaysOnTop();
     }
